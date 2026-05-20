@@ -1,0 +1,43 @@
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Build output ---
+dist/
+build/
+out/
+
+# --- Environment variables ---
+.env
+.env.local
+.env.*.local
+
+# --- Logs ---
+logs/
+*.log
+*.log.*
+debug.log
+error.log
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
+
+# --- TypeScript ---
+*.tsbuildinfo
+
+# --- Editor folders ---
+.vscode/
+.idea/
+*.swp
+
+# --- Cache ---
+.cache/
+.tmp/
+temp/
+
+# --- Optional: ignore XP file if tu veux le garder privé ---
+# xp.json
