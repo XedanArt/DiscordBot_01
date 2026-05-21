@@ -5,6 +5,9 @@ npm install -g typescript
 npm install typescript --save-dev
 npx tsc --init
 npm install dotenv
+npm install openai
+npm install groq-sdk
+
 
 
 lancer le bot : npx ts-node src/index.ts
