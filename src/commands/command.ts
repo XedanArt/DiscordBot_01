@@ -1,6 +1,8 @@
+import { SYSTEM_PROMPT } from "../config/systemPrompt";
 import { Message } from "discord.js";
 import dotenv from "dotenv";
 import Groq from "groq-sdk";
+
 
 dotenv.config();
 
@@ -21,7 +23,7 @@ export default {
       const response = await client.chat.completions.create({
         model: "llama-3.1-8b-instant",
         messages: [
-          { role: "system", content: "Tu es un assistant Discord utile et concis." },
+          { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: question }
         ]
       });
