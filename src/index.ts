@@ -9,6 +9,7 @@ import {
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+import { loadDataFiles } from "./utils/data";
 
 dotenv.config();
 
@@ -36,7 +37,7 @@ const client = new Client({
   ]
 });
 
-// Command loader (TS + JS + sous-dossiers)
+// Command loader
 const commands = new Map<string, any>();
 const commandsPath = path.join(__dirname, "commands");
 
@@ -57,16 +58,16 @@ function loadCommands(dir: string) {
 
 loadCommands(commandsPath);
 
-// Ready event (Discord.js v15)
+// ✔ Charger les fiches internes
+loadDataFiles();
+
 client.once("clientReady", () => {
   console.log(`Bot connecté en tant que ${client.user?.tag}`);
 });
 
-// Message handler
 client.on("messageCreate", (message: Message) => {
   if (message.author.bot) return;
 
-  // XP system
   const userId = message.author.id;
 
   if (!xpData[userId]) {
@@ -95,7 +96,6 @@ client.on("messageCreate", (message: Message) => {
 
   saveXP();
 
-  // Commands
   if (!message.content.startsWith("!")) return;
 
   const args = message.content.slice(1).trim().split(" ");
