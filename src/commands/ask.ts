@@ -1,13 +1,13 @@
 import { SYSTEM_PROMPT } from "../config/systemPrompt";
 import { Message } from "discord.js";
-import dotenv from "dotenv";
 import Groq from "groq-sdk";
-
+import dotenv from "dotenv";
+import { conversationHistory, addToHistory } from "../utils/memory";
 
 dotenv.config();
 
 const client = new Groq({
-  apiKey: process.env.GROQ_API_KEY
+  apiKey: process.env.GROQ_API_KEY || ""
 });
 
 export default {
@@ -21,26 +21,31 @@ export default {
 
     try {
       const response = await client.chat.completions.create({
-        model: "llama-3.1-8b-instant",
+        model: "llama-3.1-8b-instant", // modèle valide
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
+          ...conversationHistory,
           { role: "user", content: question }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 2048
       });
 
       const answer = response.choices[0].message.content || "Je n'ai pas réussi à répondre.";
 
-      // Découpage en blocs de 2000 caractères
+      // Ajout à la mémoire
+      addToHistory("user", question);
+      addToHistory("assistant", answer);
+
       const chunks = answer.match(/[\s\S]{1,2000}/g) || [];
 
-for (const chunk of chunks) {
-  await message.reply(chunk);
-}
+      for (const chunk of chunks) {
+        await message.reply(chunk);
+      }
 
-
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erreur Groq :", err);
-      message.reply("⚠️ Erreur lors de l'appel à Groq.");
+      message.reply("⚠️ Erreur lors de l'appel à Groq : " + (err?.message || "inconnue"));
     }
   }
 };

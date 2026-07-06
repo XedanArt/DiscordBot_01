@@ -36,19 +36,29 @@ const client = new Client({
   ]
 });
 
-// Command loader
+// Command loader (TS + JS + sous-dossiers)
 const commands = new Map<string, any>();
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs.readdirSync(commandsPath);
 
-for (const file of commandFiles) {
-  if (file.endsWith(".js")) {
-    const command = require(`./commands/${file}`).default;
-    commands.set(command.name, command);
+function loadCommands(dir: string) {
+  const files = fs.readdirSync(dir);
+
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+
+    if (fs.statSync(fullPath).isDirectory()) {
+      loadCommands(fullPath);
+    } else if (file.endsWith(".ts") || file.endsWith(".js")) {
+      const command = require(fullPath).default;
+      commands.set(command.name, command);
+    }
   }
 }
 
-client.once("ready", () => {
+loadCommands(commandsPath);
+
+// Ready event (Discord.js v15)
+client.once("clientReady", () => {
   console.log(`Bot connecté en tant que ${client.user?.tag}`);
 });
 
